@@ -16,10 +16,10 @@
 #define CLK 25
 #define DIO 26
 
-const char* ssid = "TP-Link_2A";
-const char* password = "30755550";
+const char* ssid = "wifi name";
+const char* password = "wifi password";
 
-const char* weatherUrl = "APIKEY";
+const char* weatherUrl = "openweatherlink";
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 TM1637Display tm(CLK, DIO);
@@ -33,7 +33,7 @@ String dateStr = "00/00/00";
 long rssi = 0;
 
 unsigned long lastWeatherUpdate = 0;
-const unsigned long weatherUpdateInterval = 600000;
+const unsigned long weatherUpdateInterval = 600000;  // 10 min
 
 void updateTime() {
   struct tm timeinfo;
@@ -73,7 +73,7 @@ void setupWiFi() {
 
 void fetchWeather() {
   if (WiFi.status() != WL_CONNECTED) {
-    outtemp = 00;
+    outtemp = -999;
     return;
   }
   HTTPClient http;
@@ -88,7 +88,7 @@ void fetchWeather() {
     if (!error) {
       outtemp = doc["main"]["temp"];
     } else {
-      outtemp = 00;
+      outtemp = -999;
     }
   } else {
     outtemp = -999;
@@ -206,7 +206,7 @@ display.drawBitmap(16, 22, image_paint_8_bits, 22, 13, 1);
 display.setTextColor(1);
 display.setTextWrap(false);
 display.setCursor(44, 26);
-display.print(outtemp);
+display.print(outtemp, 0.0);
 display.print("C");
 
 display.drawRect(75, 21, 4, 14, 1);
@@ -226,7 +226,6 @@ display.drawBitmap(66, 21, image_paint_16_bits, 1, 1, 1);
 display.setCursor(82, 26);
 display.print(roomtemp);
 display.print("C");
-
 
 display.drawBitmap(66, 19, image_paint_18_bits, 11, 3, 1);
 
